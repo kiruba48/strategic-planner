@@ -10,16 +10,16 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 ## Current Position
 
 Phase: 1 of 9 (Foundation & Static Board)
-Plan: 2 of 3 in current phase (01-02 complete)
-Status: Executing
-Last activity: 2026-02-17 — Plan 01-02 complete: Board UI components
+Plan: 3 of 3 in current phase (01-03 checkpoint: awaiting user visual approval)
+Status: Checkpoint — awaiting human verification
+Last activity: 2026-02-17 — Plan 01-03 task 1 complete: radar chart, swipe gestures, dot indicators
 
-Progress: [██░░░░░░░░] 7%
+Progress: [███░░░░░░░] 10%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
+- Total plans completed: 2 (01-03 at checkpoint)
 - Average duration: 3.5 min
 - Total execution time: 0.12 hours
 
@@ -30,8 +30,8 @@ Progress: [██░░░░░░░░] 7%
 | 01-foundation-static-board | 2 | 7 min | 3.5 min |
 
 **Recent Trend:**
-- Last 5 plans: [5min, 2min]
-- Trend: Fast — data layer + board UI in under 10 min total
+- Last 5 plans: [5min, 2min, 1min]
+- Trend: Fast — full board with radar chart in under 10 min
 
 *Updated after each plan completion*
 
@@ -56,10 +56,17 @@ Recent decisions affecting current work:
 - Inline hover handlers for accent border glow — TailwindCSS v4 can't dynamically apply lane-specific hex as class (01-02)
 - MobileTabBar z-40 fixed bottom; main content pb-[56px] on mobile to prevent overlap (01-02)
 - Selective Zustand selector per TaskCard: find(t => t.id === taskId) prevents full-list re-renders (01-02)
+- pointerType detection for touch/mouse distinction on TaskCard hover — handles hybrid devices correctly (01-03)
+- data-scroll-container attribute + closest() check in touchStart — prevents swipe-to-switch conflicting with column horizontal scroll (01-03)
+- Swipe handlers on TaskBoard main wrapper, not MobileTabBar — natural UX: users swipe the board content (01-03)
 
 ### Pending Todos
 
 None.
+
+### Roadmap Evolution
+
+- Phase 10 added: OpenClaw Integration — API server, skill, natural language task management via messaging (depends on Phase 4)
 
 ### Blockers/Concerns
 
@@ -68,5 +75,5 @@ None — Node 22.0.0 EBADENGINE warning is cosmetic (requires 22.12+), build suc
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 01-02-PLAN.md (Board UI components)
-Resume file: .planning/phases/01-foundation-static-board/01-02-SUMMARY.md
+Stopped at: 01-03-PLAN.md Task 2 checkpoint — awaiting user visual approval of complete Phase 1 board
+Resume file: .planning/phases/01-foundation-static-board/01-03-SUMMARY.md
