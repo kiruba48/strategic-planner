@@ -98,11 +98,27 @@ Each task was committed atomically:
 
 ## Deviations from Plan
 
-None - plan executed exactly as written. Note: Plan mentioned swipe handlers "could be added to TaskBoard.jsx" as a NOTE — this is exactly where they were placed, consistent with the plan's guidance.
+### Post-Checkpoint Code Review Fixes
+
+Original plan had inline radar chart reveal on hover/tap. After visual checkpoint review, replaced with TaskDetailModal pattern and fixed 11 issues:
+
+1. **Body overflow restore race** — split into separate useEffect with prev value restore
+2. **Inline onClose effect churn** — stabilized with useCallback in TaskCard
+3. **No focus trap** — autoFocus on close button (full trap deferred to Phase 9)
+4. **Classification recomputation** — use stored task.classification/totalScore directly
+5. **NaN silently maps to poker** — classifyTask guards non-finite values → returns hybrid
+6. **rAF not cancelled on unmount** — added cancelAnimationFrame cleanup in LaneContainer
+7. **RadarChart not memoized** — wrapped in memo()
+8. **Sidebar not memoized** — wrapped in memo()
+9. **Hardcoded CSS colors** — switched to var(--color-base-body) / var(--color-text-primary)
+10. **base-primary naming** — renamed to base-modal
+11. **Chess pawn emoji invisible** — switched ♟️ (black) to ♙ (white)
+
+**Impact on plan:** Modal pattern is strictly better than inline expand for task details. All fixes improve correctness and performance.
 
 ## Issues Encountered
 
-None — build succeeded cleanly on 688 modules. Node 22.0.0 EBADENGINE warning is cosmetic (build succeeds despite requiring 22.12+).
+- Chess pawn emoji (♟️) invisible on dark background — switched to white pawn (♙)
 
 ## User Setup Required
 
