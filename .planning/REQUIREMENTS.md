@@ -107,13 +107,39 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (populated during roadmap creation) | | |
+| CLAS-01 | Phase 2 | Pending |
+| CLAS-02 | Phase 2 | Pending |
+| CLAS-03 | Phase 2 | Pending |
+| CLAS-04 | Phase 5 | Pending |
+| CLAS-05 | Phase 5 | Pending |
+| KANB-01 | Phase 1 | Pending |
+| KANB-02 | Phase 1 | Pending |
+| KANB-03 | Phase 1 | Pending |
+| KANB-04 | Phase 1 | Pending |
+| KANB-05 | Phase 4 | Pending |
+| KANB-06 | Phase 4 | Pending |
+| TASK-01 | Phase 3 | Pending |
+| TASK-02 | Phase 3 | Pending |
+| TASK-03 | Phase 3 | Pending |
+| TASK-04 | Phase 3 | Pending |
+| TASK-05 | Phase 6 | Pending |
+| TASK-06 | Phase 7 | Pending |
+| TASK-07 | Phase 7 | Pending |
+| VIZN-01 | Phase 8 | Pending |
+| VIZN-02 | Phase 8 | Pending |
+| VIZN-03 | Phase 8 | Pending |
+| DATA-01 | Phase 3 | Pending |
+| DATA-02 | Phase 6 | Pending |
+| DATA-03 | Phase 6 | Pending |
+| MOBL-01 | Phase 4 | Pending |
+| MOBL-02 | Phase 4 | Pending |
+| MOBL-03 | Phase 1 | Pending |
 
 **Coverage:**
-- v1 requirements: 22 total
-- Mapped to phases: 0
-- Unmapped: 22 (pending roadmap creation)
+- v1 requirements: 27 total
+- Mapped to phases: 27
+- Unmapped: 0 (100% coverage)
 
 ---
 *Requirements defined: 2026-02-16*
-*Last updated: 2026-02-16 after initial definition*
+*Last updated: 2026-02-16 after roadmap creation*
