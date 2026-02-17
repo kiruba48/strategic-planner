@@ -33,10 +33,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Board adapts between mobile (single-lane view) and desktop (3-lane view) at appropriate breakpoints
   3. Mock tasks display with radar charts showing 5-dimension score profiles
   4. Project runs locally with Vite + React 19 + TailwindCSS v4 + Zustand
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] TBD
+- [ ] 01-01-PLAN.md — Project scaffold, dark theme, stores, scoring lib, seed data
+- [ ] 01-02-PLAN.md — Board layout, sidebar, tab bar, lanes, columns, task cards
+- [ ] 01-03-PLAN.md — RadarChart visualization, mobile swipe/dots, visual checkpoint
 
 ### Phase 2: Classification System
 **Goal**: User can score tasks on 5 dimensions with automatic Chess/Hybrid/Poker classification
@@ -160,7 +162,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Static Board | 0/0 | Not started | - |
+| 1. Foundation & Static Board | 0/3 | Planned | - |
 | 2. Classification System | 0/0 | Not started | - |
 | 3. Task CRUD Operations | 0/0 | Not started | - |
 | 4. Drag-and-Drop Within Lanes | 0/0 | Not started | - |
