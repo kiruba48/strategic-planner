@@ -1,14 +1,18 @@
 /**
  * TaskCard — Individual task card with title, emoji badge,
- * mini dimension bars, and description preview.
+ * mini dimension bars, description preview, and radar chart reveal.
+ *
+ * Desktop: hover reveals radar chart below dimension bars.
+ * Mobile: tap toggles radar chart (tap to reveal, tap again to hide).
  *
  * Uses selective Zustand selector (taskId) to prevent unnecessary re-renders.
- * Radar chart appears on hover/tap in Plan 03 — NOT rendered here.
  */
 
+import { useState, useCallback } from 'react'
 import clsx from 'clsx'
 import { useTaskStore } from '../../stores/taskStore.js'
 import { LANES } from '../../constants/columns.js'
+import TaskRadarChart from '../Visualization/RadarChart.jsx'
 
 // Dimension abbreviations in display order
 const DIMENSION_KEYS = ['IC', 'AA', 'OV', 'RS', 'RV']
@@ -16,34 +20,71 @@ const DIMENSION_KEYS = ['IC', 'AA', 'OV', 'RS', 'RV']
 // Map lane id -> lane metadata (accent, subtle)
 const LANE_MAP = Object.fromEntries(LANES.map((l) => [l.id, l]))
 
+// Detect touch device to distinguish mobile tap behavior
+const isTouchDevice = () =>
+  typeof window !== 'undefined' &&
+  ('ontouchstart' in window || navigator.maxTouchPoints > 0)
+
 export default function TaskCard({ taskId, laneAccent }) {
   const task = useTaskStore((s) => s.tasks.find((t) => t.id === taskId))
+  const [isExpanded, setIsExpanded] = useState(false)
 
-  if (!task) return null
-
-  const laneMeta = LANE_MAP[task.classification]
+  const laneMeta = LANE_MAP[task?.classification]
   const accent = laneAccent ?? laneMeta?.accent ?? '#6366f1'
   const subtleBg = laneMeta?.subtle ?? '#1a1a24'
   const emoji = laneMeta?.emoji ?? '?'
+
+  // Desktop hover handlers
+  const handleMouseEnter = useCallback(
+    (e) => {
+      if (isTouchDevice()) return
+      e.currentTarget.style.borderColor = accent + '55'
+      e.currentTarget.style.backgroundColor = '#1e1e2e'
+      setIsExpanded(true)
+    },
+    [accent]
+  )
+
+  const handleMouseLeave = useCallback((e) => {
+    if (isTouchDevice()) return
+    e.currentTarget.style.borderColor = '#1f2937'
+    e.currentTarget.style.backgroundColor = '#1a1a24'
+    setIsExpanded(false)
+  }, [])
+
+  // Mobile tap handler — toggle radar chart
+  const handleTap = useCallback(
+    (e) => {
+      if (!isTouchDevice()) return
+      e.stopPropagation()
+      setIsExpanded((prev) => !prev)
+      // Update border glow to match expanded state
+      const el = e.currentTarget
+      if (!isExpanded) {
+        el.style.borderColor = accent + '55'
+        el.style.backgroundColor = '#1e1e2e'
+      } else {
+        el.style.borderColor = '#1f2937'
+        el.style.backgroundColor = '#1a1a24'
+      }
+    },
+    [accent, isExpanded]
+  )
+
+  if (!task) return null
 
   return (
     <div
       className={clsx(
         'group rounded-lg p-3 border border-[#1f2937]',
-        'transition-all duration-150 cursor-pointer',
-        'hover:border-opacity-80'
+        'transition-colors duration-150 cursor-pointer',
       )}
       style={{
         backgroundColor: '#1a1a24',
       }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = accent + '55'
-        e.currentTarget.style.backgroundColor = '#1e1e2e'
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = '#1f2937'
-        e.currentTarget.style.backgroundColor = '#1a1a24'
-      }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onClick={handleTap}
     >
       {/* Title row with emoji badge */}
       <div className="flex items-start gap-2 mb-2">
@@ -87,10 +128,28 @@ export default function TaskCard({ taskId, laneAccent }) {
 
       {/* Description preview */}
       {task.description && (
-        <p className="text-xs text-[#94a3b8] line-clamp-2 leading-relaxed">
+        <p className="text-xs text-[#94a3b8] line-clamp-2 leading-relaxed mb-2">
           {task.description}
         </p>
       )}
+
+      {/* Radar chart reveal — smooth transition */}
+      <div
+        style={{
+          maxHeight: isExpanded ? '140px' : '0px',
+          opacity: isExpanded ? 1 : 0,
+          overflow: 'hidden',
+          transition: 'max-height 200ms ease-out, opacity 200ms ease-out',
+        }}
+      >
+        <div className="flex justify-center pt-1">
+          <TaskRadarChart
+            scores={task.scores}
+            accentColor={accent}
+            size={120}
+          />
+        </div>
+      </div>
     </div>
   )
 }
