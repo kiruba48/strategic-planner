@@ -9,52 +9,68 @@
  * - Dot indicators below column row showing current scroll position
  */
 
-import { useRef, useState, useCallback } from 'react'
+import { memo, useRef, useState, useCallback, useMemo, useEffect } from 'react'
+import { useShallow } from 'zustand/react/shallow'
 import { useTaskStore } from '../../stores/taskStore.js'
 import { LANE_COLUMNS, LANES } from '../../constants/columns.js'
 import KanbanColumn from './KanbanColumn.jsx'
 
-export default function LaneContainer({ laneId }) {
+export default memo(function LaneContainer({ laneId }) {
   const columns = LANE_COLUMNS[laneId] ?? []
   const laneMeta = LANES.find((l) => l.id === laneId)
 
-  // Flat task array — filter by lane then split by column
-  const tasks = useTaskStore((s) => s.tasks.filter((t) => t.classification === laneId))
+  // useShallow prevents re-renders when filter returns same-content array
+  const tasks = useTaskStore(useShallow((s) => s.tasks.filter((t) => t.classification === laneId)))
 
-  // Build column -> taskId[] map
-  const tasksByColumn = {}
-  for (const col of columns) {
-    tasksByColumn[col.id] = tasks
-      .filter((t) => t.column === col.id)
-      .sort((a, b) => a.order - b.order)
-      .map((t) => t.id)
-  }
+  // Memoize column -> taskId[] map
+  const tasksByColumn = useMemo(() => {
+    const result = {}
+    for (const col of columns) {
+      result[col.id] = tasks
+        .filter((t) => t.column === col.id)
+        .sort((a, b) => a.order - b.order)
+        .map((t) => t.id)
+    }
+    return result
+  }, [tasks, columns])
 
   // Scroll container ref for dot indicator tracking
   const scrollContainerRef = useRef(null)
   const [activeColumnIndex, setActiveColumnIndex] = useState(0)
+  const rafRef = useRef(null)
 
+  // Throttled scroll handler via requestAnimationFrame
   const handleScroll = useCallback(() => {
-    const el = scrollContainerRef.current
-    if (!el || columns.length === 0) return
-    // Each column is approximately 236px wide (220px + 16px gap)
-    const columnWidth = el.scrollWidth / columns.length
-    const index = Math.round(el.scrollLeft / columnWidth)
-    setActiveColumnIndex(Math.max(0, Math.min(index, columns.length - 1)))
+    if (rafRef.current) return
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = null
+      const el = scrollContainerRef.current
+      if (!el || columns.length === 0) return
+      const columnWidth = el.scrollWidth / columns.length
+      const index = Math.round(el.scrollLeft / columnWidth)
+      setActiveColumnIndex(Math.max(0, Math.min(index, columns.length - 1)))
+    })
   }, [columns.length])
+
+  // Cancel pending rAF on unmount to prevent stale state updates
+  useEffect(() => {
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    }
+  }, [])
 
   const accent = laneMeta?.accent ?? '#6366f1'
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
       {/* Lane header */}
-      <div className="shrink-0 flex items-center gap-2 px-4 py-3 border-b border-[#1f2937]">
+      <div className="shrink-0 flex items-center gap-2 px-4 py-3 border-b border-border">
         <span className="text-lg leading-none">{laneMeta?.emoji}</span>
-        <h2 className="text-base font-semibold text-[#f1f5f9]">{laneMeta?.label}</h2>
-        <span className="text-xs text-[#475569] font-normal">
+        <h2 className="text-base font-semibold text-text-primary">{laneMeta?.label}</h2>
+        <span className="text-xs text-text-muted font-normal">
           ({laneMeta?.scoreRange?.[0]}-{laneMeta?.scoreRange?.[1]})
         </span>
-        <span className="ml-auto text-xs text-[#475569]">
+        <span className="ml-auto text-xs text-text-muted">
           {tasks.length} task{tasks.length !== 1 ? 's' : ''}
         </span>
       </div>
@@ -62,6 +78,7 @@ export default function LaneContainer({ laneId }) {
       {/* Columns — horizontal scroll on mobile */}
       <div
         ref={scrollContainerRef}
+        data-scroll-container
         className="flex-1 overflow-x-auto overflow-y-hidden"
         onScroll={handleScroll}
       >
@@ -93,4 +110,4 @@ export default function LaneContainer({ laneId }) {
       )}
     </div>
   )
-}
+})

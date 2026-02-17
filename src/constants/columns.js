@@ -32,7 +32,7 @@ export const LANES = [
   {
     id: 'chess',
     label: 'Chess',
-    emoji: '♟️',
+    emoji: '♙',
     scoreRange: [5, 7],
     description: 'High-information deterministic tasks — velocity and automation',
     accent: '#3b82f6',

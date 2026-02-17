@@ -7,13 +7,32 @@
  *   11-15: poker  — low information, relationship-driven, time carefully
  */
 
+import { LANES } from '../../constants/columns.js'
+
+const REQUIRED_DIMENSIONS = ['IC', 'AA', 'OV', 'RS', 'RV']
+
+// Build lookup from LANES — single source of truth
+const LANE_META = Object.fromEntries(
+  LANES.map((l) => [
+    l.id,
+    { label: l.label, emoji: l.emoji, accent: l.accent, range: `${l.scoreRange[0]}-${l.scoreRange[1]}` },
+  ])
+)
+
 /**
  * Sum all 5 dimension scores.
  * @param {Record<string, number>} scores - Object with dimension IDs as keys and 1-3 values
  * @returns {number} Total score (5-15)
  */
 export function getTotalScore(scores) {
-  return Object.values(scores).reduce((sum, val) => sum + val, 0)
+  if (!scores || typeof scores !== 'object') return 5
+  let total = 0
+  for (const dim of REQUIRED_DIMENSIONS) {
+    const val = scores[dim]
+    if (typeof val !== 'number' || val < 1 || val > 3) return NaN
+    total += val
+  }
+  return total
 }
 
 /**
@@ -22,6 +41,7 @@ export function getTotalScore(scores) {
  * @returns {'chess' | 'hybrid' | 'poker'} Classification
  */
 export function classifyTask(totalScore) {
+  if (!Number.isFinite(totalScore)) return 'hybrid'
   if (totalScore <= 7) return 'chess'
   if (totalScore <= 10) return 'hybrid'
   return 'poker'
@@ -39,14 +59,10 @@ export function getDefaultColumn(_classification) {
 
 /**
  * Get classification metadata for display.
+ * Uses LANES from constants as single source of truth.
  * @param {'chess' | 'hybrid' | 'poker'} classification
  * @returns {{ label: string, emoji: string, accent: string, range: string }}
  */
 export function getClassificationMeta(classification) {
-  const meta = {
-    chess: { label: 'Chess', emoji: '♟️', accent: '#3b82f6', range: '5-7' },
-    hybrid: { label: 'Hybrid', emoji: '🎲', accent: '#8b5cf6', range: '8-10' },
-    poker: { label: 'Poker', emoji: '🃏', accent: '#f59e0b', range: '11-15' },
-  }
-  return meta[classification] ?? meta.hybrid
+  return LANE_META[classification] ?? LANE_META.hybrid
 }

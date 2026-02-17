@@ -8,6 +8,7 @@
  * ResponsiveContainer to measure correctly.
  */
 
+import { memo } from 'react'
 import {
   RadarChart,
   Radar,
@@ -18,7 +19,7 @@ import {
 
 const DIMENSION_LABELS = ['IC', 'AA', 'OV', 'RS', 'RV']
 
-export default function TaskRadarChart({ scores = {}, accentColor = '#6366f1', size = 120 }) {
+export default memo(function TaskRadarChart({ scores = {}, accentColor = '#6366f1', size = 120 }) {
   const data = DIMENSION_LABELS.map((key) => ({
     subject: key,
     value: scores[key] ?? 1,
@@ -54,4 +55,4 @@ export default function TaskRadarChart({ scores = {}, accentColor = '#6366f1', s
       </ResponsiveContainer>
     </div>
   )
-}
+})

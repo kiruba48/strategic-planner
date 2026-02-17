@@ -5,11 +5,12 @@
  * Active lane highlighted with lane's accent tint color.
  */
 
+import { memo } from 'react'
 import clsx from 'clsx'
 import { useUIStore } from '../../stores/uiStore.js'
 import { LANES } from '../../constants/columns.js'
 
-export default function Sidebar() {
+export default memo(function Sidebar() {
   const activeLane = useUIStore((s) => s.activeLane)
   const sidebarCollapsed = useUIStore((s) => s.sidebarCollapsed)
   const setActiveLane = useUIStore((s) => s.setActiveLane)
@@ -19,27 +20,26 @@ export default function Sidebar() {
     <aside
       className={clsx(
         'hidden md:flex md:flex-col',
-        'shrink-0 h-screen',
-        'border-r border-[#1f2937]',
+        'shrink-0 h-screen bg-base-sidebar',
+        'border-r border-border',
         'transition-all duration-200',
         sidebarCollapsed ? 'w-14' : 'w-52'
       )}
-      style={{ backgroundColor: '#0f0f17' }}
     >
       {/* Logo / header area */}
       <div
         className={clsx(
-          'flex items-center h-14 px-3 border-b border-[#1f2937]',
+          'flex items-center h-14 px-3 border-b border-border',
           sidebarCollapsed ? 'justify-center' : 'justify-between'
         )}
       >
         {!sidebarCollapsed && (
-          <span className="text-xs font-semibold tracking-widest text-[#475569] uppercase">
+          <span className="text-xs font-semibold tracking-widest text-text-muted uppercase">
             Lanes
           </span>
         )}
         {sidebarCollapsed && (
-          <span className="text-base text-[#475569]">≡</span>
+          <span className="text-base text-text-muted">≡</span>
         )}
       </div>
 
@@ -57,7 +57,7 @@ export default function Sidebar() {
                 sidebarCollapsed ? 'justify-center px-0 py-2.5' : 'gap-2.5 px-3 py-2.5',
                 isActive
                   ? 'text-white'
-                  : 'text-[#94a3b8] hover:text-white hover:bg-white/5'
+                  : 'text-text-secondary hover:text-white hover:bg-white/5'
               )}
               style={
                 isActive
@@ -72,7 +72,7 @@ export default function Sidebar() {
               {!sidebarCollapsed && (
                 <span className="flex-1 text-left">
                   {lane.label}
-                  <span className="ml-1.5 text-xs text-[#475569] font-normal">
+                  <span className="ml-1.5 text-xs text-text-muted font-normal">
                     ({lane.scoreRange[0]}-{lane.scoreRange[1]})
                   </span>
                 </span>
@@ -83,13 +83,13 @@ export default function Sidebar() {
       </nav>
 
       {/* Collapse / expand toggle */}
-      <div className="shrink-0 border-t border-[#1f2937] p-2">
+      <div className="shrink-0 border-t border-border p-2">
         <button
           onClick={toggleSidebar}
           title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           className={clsx(
-            'w-full flex items-center rounded-md px-3 py-2 text-sm text-[#475569]',
-            'hover:text-[#94a3b8] hover:bg-white/5 transition-colors duration-150',
+            'w-full flex items-center rounded-md px-3 py-2 text-sm text-text-muted',
+            'hover:text-text-secondary hover:bg-white/5 transition-colors duration-150',
             sidebarCollapsed ? 'justify-center px-0' : 'gap-2'
           )}
         >
@@ -99,4 +99,4 @@ export default function Sidebar() {
       </div>
     </aside>
   )
-}
+})
