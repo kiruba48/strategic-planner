@@ -7,6 +7,7 @@
 
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
+import { safeLocalStorage } from '../lib/safeLocalStorage.js'
 
 export const useUIStore = create()(
   persist(
@@ -24,17 +25,7 @@ export const useUIStore = create()(
     }),
     {
       name: 'chess-poker-ui:v1',
-      storage: createJSONStorage(() => {
-        try {
-          return localStorage
-        } catch {
-          return {
-            getItem: () => null,
-            setItem: () => {},
-            removeItem: () => {},
-          }
-        }
-      }),
+      storage: createJSONStorage(safeLocalStorage),
       partialize: (state) => ({
         activeLane: state.activeLane,
         sidebarCollapsed: state.sidebarCollapsed,

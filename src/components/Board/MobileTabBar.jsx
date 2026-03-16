@@ -15,8 +15,7 @@ export default function MobileTabBar() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 md:hidden z-40 border-t border-[#1f2937]"
-      style={{ backgroundColor: '#0f0f17' }}
+      className="fixed bottom-0 left-0 right-0 md:hidden z-40 border-t border-border bg-base-sidebar"
     >
       <div className="flex items-stretch">
         {LANES.map((lane) => {
@@ -28,7 +27,7 @@ export default function MobileTabBar() {
               className={clsx(
                 'flex-1 flex flex-col items-center justify-center gap-0.5 py-2',
                 'text-xs font-medium transition-colors duration-150',
-                isActive ? 'text-white' : 'text-[#475569]'
+                isActive ? 'text-white' : 'text-text-muted'
               )}
               style={isActive ? { color: lane.accent } : {}}
             >
@@ -39,7 +38,7 @@ export default function MobileTabBar() {
         })}
       </div>
       {/* iOS safe area spacer */}
-      <div className="h-safe-bottom" style={{ height: 'env(safe-area-inset-bottom, 0px)' }} />
+      <div style={{ height: 'env(safe-area-inset-bottom, 0px)' }} />
     </nav>
   )
 }

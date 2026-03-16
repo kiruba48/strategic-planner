@@ -21,6 +21,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 7: Task Archiving** - Soft archive completed tasks to keep board clean
 - [ ] **Phase 8: Differentiating Visualizations** - Bottleneck indicators, classification analytics
 - [ ] **Phase 9: Polish & Hardening** - Production readiness, error handling, multi-tab sync
+- [ ] **Phase 10: OpenClaw Integration** - API server, skill, natural language task management via messaging
 
 ## Phase Details
 
@@ -158,7 +159,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -171,3 +172,21 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 7. Task Archiving | 0/0 | Not started | - |
 | 8. Differentiating Visualizations | 0/0 | Not started | - |
 | 9. Polish & Hardening | 0/0 | Not started | - |
+| 10. OpenClaw Integration | 0/0 | Not started | - |
+
+### Phase 10: OpenClaw Integration
+**Goal**: Add local API server and OpenClaw skill for natural language task management via messaging apps (WhatsApp/Telegram)
+**Depends on**: Phase 4 (requires working CRUD + drag-and-drop)
+**Requirements**: (No direct requirements — enhancement phase)
+**Success Criteria** (what must be TRUE):
+  1. Local Express/Hono API server exposes task CRUD operations over HTTP (POST/GET/PUT/DELETE /api/tasks)
+  2. React app reads/writes tasks via API instead of raw localStorage (persistence migration to shared JSON file)
+  3. OpenClaw skill (SKILL.md) enables natural language task creation with dimension scoring
+  4. User can text "add task: write annual review, IC=2 AA=1 OV=2 RS=3 RV=2" from a messaging app and see it appear on the board
+  5. GET /api/tasks returns task list with classification and column info for OpenClaw queries
+**Plans**: TBD
+
+Plans:
+- [ ] TBD
+
+**Research**: .planning/phases/01-foundation-static-board/OPENCLAW-RESEARCH.md (2026-02-17, valid until 2026-03-17)

@@ -5,26 +5,18 @@
  * for this column. Renders TaskCard for each task.
  */
 
+import { memo } from 'react'
 import TaskCard from '../Task/TaskCard.jsx'
 
-export default function KanbanColumn({ column, taskIds, laneAccent }) {
+export default memo(function KanbanColumn({ column, taskIds, laneAccent }) {
   const count = taskIds.length
 
   return (
-    <div
-      className="flex flex-col min-w-[220px] flex-1 rounded-lg overflow-hidden"
-      style={{ backgroundColor: '#111118' }}
-    >
+    <div className="flex flex-col min-w-[220px] flex-1 rounded-lg overflow-hidden bg-base-surface">
       {/* Sticky header */}
-      <div
-        className="sticky top-0 z-10 flex items-center justify-between px-3 py-2.5 border-b border-[#1f2937]"
-        style={{ backgroundColor: '#111118' }}
-      >
-        <span className="text-sm font-semibold text-[#f1f5f9]">{column.label}</span>
-        <span
-          className="text-xs font-medium px-1.5 py-0.5 rounded-full text-[#94a3b8]"
-          style={{ backgroundColor: '#1a1a24' }}
-        >
+      <div className="sticky top-0 z-10 flex items-center justify-between px-3 py-2.5 border-b border-border bg-base-surface">
+        <span className="text-sm font-semibold text-text-primary">{column.label}</span>
+        <span className="text-xs font-medium px-1.5 py-0.5 rounded-full text-text-secondary bg-base-card">
           {count}
         </span>
       </div>
@@ -35,11 +27,11 @@ export default function KanbanColumn({ column, taskIds, laneAccent }) {
           <TaskCard key={taskId} taskId={taskId} laneAccent={laneAccent} />
         ))}
         {count === 0 && (
-          <div className="flex items-center justify-center h-20 text-xs text-[#475569] italic">
+          <div className="flex items-center justify-center h-20 text-xs text-text-muted italic">
             No tasks
           </div>
         )}
       </div>
     </div>
   )
-}
+})

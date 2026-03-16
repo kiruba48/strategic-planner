@@ -4,9 +4,10 @@
  * Desktop: Sidebar (left) + active lane board (right)
  * Mobile: full-width board + MobileTabBar (fixed bottom)
  *
- * Mobile swipe gestures (Plan 03):
- * Horizontal swipe on the board content area switches lanes.
- * Threshold: 50px horizontal, must be more horizontal than vertical.
+ * Mobile swipe gestures:
+ * Horizontal swipe on non-scrollable areas (lane header) switches lanes.
+ * Swipes originating inside the horizontal scroll container are ignored
+ * to prevent conflict with column scrolling.
  */
 
 import { useRef, useCallback } from 'react'
@@ -24,15 +25,20 @@ export default function TaskBoard() {
   const setActiveLane = useUIStore((s) => s.setActiveLane)
 
   // Touch tracking for swipe gestures
-  const touchStartRef = useRef({ x: 0, y: 0 })
+  const touchStartRef = useRef({ x: 0, y: 0, insideScrollable: false })
 
   const handleTouchStart = useCallback((e) => {
     const touch = e.touches[0]
-    touchStartRef.current = { x: touch.clientX, y: touch.clientY }
+    // Check if touch started inside a horizontally-scrollable container
+    const insideScrollable = e.target.closest('[data-scroll-container]') !== null
+    touchStartRef.current = { x: touch.clientX, y: touch.clientY, insideScrollable }
   }, [])
 
   const handleTouchEnd = useCallback(
     (e) => {
+      // Skip lane-switch if swipe started inside the column scroll area
+      if (touchStartRef.current.insideScrollable) return
+
       const touch = e.changedTouches[0]
       const dx = touch.clientX - touchStartRef.current.x
       const dy = touch.clientY - touchStartRef.current.y
@@ -42,11 +48,11 @@ export default function TaskBoard() {
 
       const currentIndex = LANE_IDS.indexOf(activeLane)
       if (dx < 0) {
-        // Swipe left → next lane (wrap)
+        // Swipe left -> next lane (wrap)
         const nextIndex = (currentIndex + 1) % LANE_IDS.length
         setActiveLane(LANE_IDS[nextIndex])
       } else {
-        // Swipe right → previous lane (wrap)
+        // Swipe right -> previous lane (wrap)
         const prevIndex = (currentIndex - 1 + LANE_IDS.length) % LANE_IDS.length
         setActiveLane(LANE_IDS[prevIndex])
       }
@@ -55,7 +61,7 @@ export default function TaskBoard() {
   )
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: '#0a0a0f' }}>
+    <div className="flex h-screen overflow-hidden bg-base-body">
       {/* Desktop sidebar */}
       <Sidebar />
 

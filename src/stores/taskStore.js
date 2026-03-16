@@ -11,46 +11,11 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import { nanoid } from 'nanoid'
 import { MOCK_TASKS } from '../lib/seed.js'
 import { getTotalScore, classifyTask, getDefaultColumn } from '../lib/scoring/classifier.js'
-
-// Safe localStorage wrapper — handles incognito / quota errors gracefully
-const safeLocalStorage = () => {
-  try {
-    return {
-      getItem: (key) => {
-        try {
-          return localStorage.getItem(key)
-        } catch {
-          return null
-        }
-      },
-      setItem: (key, value) => {
-        try {
-          localStorage.setItem(key, value)
-        } catch {
-          // Quota exceeded or security error — fail silently
-        }
-      },
-      removeItem: (key) => {
-        try {
-          localStorage.removeItem(key)
-        } catch {
-          // Fail silently
-        }
-      },
-    }
-  } catch {
-    // localStorage not available (SSR, etc.)
-    return {
-      getItem: () => null,
-      setItem: () => {},
-      removeItem: () => {},
-    }
-  }
-}
+import { safeLocalStorage } from '../lib/safeLocalStorage.js'
 
 export const useTaskStore = create()(
   persist(
-    (set, get) => ({
+    (set) => ({
       tasks: MOCK_TASKS,
 
       // ── Mutations ─────────────────────────────────────────────────────────
@@ -84,7 +49,12 @@ export const useTaskStore = create()(
             // Recalculate classification if scores changed
             if (updates.scores) {
               merged.totalScore = getTotalScore(merged.scores)
-              merged.classification = classifyTask(merged.totalScore)
+              const newClassification = classifyTask(merged.totalScore)
+              // Reset column to backlog if classification changed — prevents orphaned tasks
+              if (newClassification !== task.classification) {
+                merged.column = 'backlog'
+              }
+              merged.classification = newClassification
             }
             merged.updatedAt = new Date().toISOString()
             return merged
@@ -108,18 +78,6 @@ export const useTaskStore = create()(
             }
           }),
         }))
-      },
-
-      // ── Selectors ─────────────────────────────────────────────────────────
-
-      getTasksByLane: (lane) => {
-        return get().tasks.filter((t) => t.classification === lane)
-      },
-
-      getTasksByColumn: (lane, column) => {
-        return get()
-          .tasks.filter((t) => t.classification === lane && t.column === column)
-          .sort((a, b) => a.order - b.order)
       },
     }),
     {
