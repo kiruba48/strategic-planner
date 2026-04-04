@@ -26,13 +26,9 @@ const LANE_META = Object.fromEntries(
  */
 export function getTotalScore(scores) {
   if (!scores || typeof scores !== 'object') return 5
-  let total = 0
-  for (const dim of REQUIRED_DIMENSIONS) {
-    const val = scores[dim]
-    if (typeof val !== 'number' || val < 1 || val > 3) return NaN
-    total += val
-  }
-  return total
+  const vals = REQUIRED_DIMENSIONS.map((dim) => scores[dim])
+  if (vals.some((val) => typeof val !== 'number' || val < 1 || val > 3)) return NaN
+  return vals.reduce((total, val) => total + val, 0)
 }
 
 /**
