@@ -38,9 +38,8 @@ export function getTotalScore(scores) {
  */
 export function classifyTask(totalScore) {
   if (!Number.isFinite(totalScore)) return 'hybrid'
-  if (totalScore <= 7) return 'chess'
-  if (totalScore <= 10) return 'hybrid'
-  return 'poker'
+  const lane = LANES.find((l) => totalScore >= l.scoreRange[0] && totalScore <= l.scoreRange[1])
+  return lane?.id ?? 'hybrid'
 }
 
 /**
