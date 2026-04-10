@@ -14,6 +14,7 @@ import { LANES } from '../../constants/columns.js'
 import { DIMENSIONS } from '../../lib/scoring/dimensions.js'
 import { getClassificationMeta } from '../../lib/scoring/classifier.js'
 import TaskRadarChart from '../Visualization/RadarChart.jsx'
+import DimensionBar from './DimensionBar.jsx'
 
 const LANE_MAP = Object.fromEntries(LANES.map((l) => [l.id, l]))
 
@@ -119,29 +120,16 @@ export default function TaskDetailModal({ task, onClose }) {
             {DIMENSIONS.map((dim) => {
               const score = task.scores?.[dim.id] ?? 1
               const level = dim.levels.find((l) => l.value === score)
-              const fillPct = Math.round((score / 3) * 100)
               return (
-                <div key={dim.id} className="space-y-0.5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-text-secondary">
-                      <span className="font-mono text-text-muted mr-1.5">{dim.id}</span>
-                      {dim.label}
-                    </span>
-                    <span className="text-xs font-medium" style={{ color: accent }}>
-                      {level?.label ?? score} ({score}/3)
-                    </span>
-                  </div>
-                  <div className="h-1 rounded-full bg-base-sidebar">
-                    <div
-                      className="h-full rounded-full transition-all duration-300"
-                      style={{
-                        width: `${fillPct}%`,
-                        backgroundColor: accent,
-                        opacity: 0.75,
-                      }}
-                    />
-                  </div>
-                </div>
+                <DimensionBar
+                  key={dim.id}
+                  dimId={dim.id}
+                  label={dim.label}
+                  score={score}
+                  levelLabel={level?.label}
+                  accent={accent}
+                  size="detailed"
+                />
               )
             })}
           </div>
