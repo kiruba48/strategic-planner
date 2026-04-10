@@ -13,6 +13,7 @@ import clsx from 'clsx'
 import { useTaskStore } from '../../stores/taskStore.js'
 import { LANES } from '../../constants/columns.js'
 import TaskDetailModal from './TaskDetailModal.jsx'
+import DimensionBar from './DimensionBar.jsx'
 
 // Dimension abbreviations in display order
 const DIMENSION_KEYS = ['IC', 'AA', 'OV', 'RS', 'RV']
@@ -80,19 +81,11 @@ export default memo(function TaskCard({ taskId, laneAccent }) {
         <div className="space-y-[3px] mb-2">
           {DIMENSION_KEYS.map((dim) => {
             const score = task.scores?.[dim] ?? 1
-            const fillPct = Math.round((score / 3) * 100)
             return (
               <div key={dim} className="flex items-center gap-1.5">
                 <span className="text-[10px] text-text-muted w-5 shrink-0 font-mono">{dim}</span>
-                <div className="flex-1 h-[3px] rounded-full bg-base-sidebar">
-                  <div
-                    className="h-full rounded-full"
-                    style={{
-                      width: `${fillPct}%`,
-                      backgroundColor: accent,
-                      opacity: 0.75,
-                    }}
-                  />
+                <div className="flex-1">
+                  <DimensionBar score={score} accent={accent} size="compact" />
                 </div>
               </div>
             )

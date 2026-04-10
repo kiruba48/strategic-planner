@@ -14,6 +14,7 @@ import { LANES } from '../../constants/columns.js'
 import { DIMENSIONS } from '../../lib/scoring/dimensions.js'
 import { getClassificationMeta } from '../../lib/scoring/classifier.js'
 import TaskRadarChart from '../Visualization/RadarChart.jsx'
+import DimensionBar from './DimensionBar.jsx'
 
 const LANE_MAP = Object.fromEntries(LANES.map((l) => [l.id, l]))
 
@@ -119,7 +120,6 @@ export default function TaskDetailModal({ task, onClose }) {
             {DIMENSIONS.map((dim) => {
               const score = task.scores?.[dim.id] ?? 1
               const level = dim.levels.find((l) => l.value === score)
-              const fillPct = Math.round((score / 3) * 100)
               return (
                 <div key={dim.id} className="space-y-0.5">
                   <div className="flex items-center justify-between">
@@ -131,16 +131,7 @@ export default function TaskDetailModal({ task, onClose }) {
                       {level?.label ?? score} ({score}/3)
                     </span>
                   </div>
-                  <div className="h-1 rounded-full bg-base-sidebar">
-                    <div
-                      className="h-full rounded-full transition-all duration-300"
-                      style={{
-                        width: `${fillPct}%`,
-                        backgroundColor: accent,
-                        opacity: 0.75,
-                      }}
-                    />
-                  </div>
+                  <DimensionBar score={score} accent={accent} size="detailed" />
                 </div>
               )
             })}
